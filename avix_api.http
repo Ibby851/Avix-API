@@ -1,0 +1,62 @@
+# POST http://localhost:8000/api/accounts/login/
+# Content-Type: application/json
+
+# {
+#     "username":"Alaba",
+#     "password":"password"
+# }
+
+# POST http://localhost:8000/api/accounts/logout/
+# Authorization: Token b33c6e14ba13c71f6272a57670ba0dc1bed8a9d1
+
+# POST http://localhost:8000/api/accounts/update/
+# Content-Type: application/json
+# Authorization: Token 08faf0bd5f749cf7a5319cb96e5609bf9faf0df7
+
+# {
+#     "username":"Apeke",
+#     "first_name":"Idowu",
+#     "last_name":"Roheemat",
+#     "phone_number":"+2349031849375",
+#     "email":"brahmzcodes@gamil.com"
+# }
+
+# POST http://localhost:8000/api/farms/add-farm/
+# Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+# Content-Type: application/json
+
+# {
+#     "farm_name":"Farm 4",
+#     "farm_address":"Mayfair",
+#     "bird_type":"Broilers",
+#     "age":4,
+#     "population":100
+
+# }
+
+
+#  GET http://localhost:8000/api/farms/farms-list/
+#  Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+
+GET http://localhost:8000/api/farms/farm-details/
+Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+Content-Type: application/json
+
+{
+    "farm_id":5
+}
+
+# POST http://localhost:8000/api/farms/farm-activity/
+# Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+# Content-Type: application/json
+
+# # #clear, start_raring
+
+# {
+#     "farm_id":5,
+#     "activity_type":"start_raring",
+#     "bird_type":"Broilers",
+#     "population":200,
+#     "age":3
+    
+# }
