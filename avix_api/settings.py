@@ -28,7 +28,8 @@ SECRET_KEY = 'django-insecure-wcg^l=8vrm)aszgy(e7*7v@mi8b-z)lwnje&he&rbvdvq%a4n5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["avix-api.onrender.com/"]
+CSRF_TRUSTED_ORIGINS = ["https://avix-api.onrender.com/"]
 
 
 # Application definition
