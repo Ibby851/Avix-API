@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Farm, Bird
+from .models import Farm, Bird, Bot
 
 
 class FarmRegistrationSerializer(serializers.ModelSerializer):
@@ -25,12 +25,17 @@ class FarmSerializer(serializers.ModelSerializer):
         fields = ['id','farm_name', 'farm_address', 'bots_count','created_at']
         read_only_fields = fields
 
-    def get_bots_count(self, obj):
+    def get_bots_count(self, obj) -> int:
         return obj.bots.count()
 
 class BirdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bird
         fields = ['bird_type', 'age', 'population', 'raring_starts_at']
+class BotSerializer(serializers.ModelSerializer):
+    farm_id = serializers.PrimaryKeyRelatedField(queryset=Farm.objects.all(), source="farm")
+    class Meta:
+        model = Bot
+        fields = ['unique_id', 'name', 'farm_id']
         
 

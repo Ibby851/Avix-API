@@ -26,7 +26,7 @@
 # Content-Type: application/json
 
 # {
-#     "farm_name":"Farm 4",
+#     "farm_name":"Farm 5",
 #     "farm_address":"Mayfair",
 #     "bird_type":"Broilers",
 #     "age":4,
@@ -38,25 +38,28 @@
 #  GET http://localhost:8000/api/farms/farms-list/
 #  Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
 
-GET http://localhost:8000/api/farms/farm-details/
-Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
-Content-Type: application/json
+# GET http://localhost:8000/api/farms/farm-details/
+# Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+# Content-Type: application/json
 
-{
-    "farm_id":5
-}
+# {
+#     "farm_id":5
+# }
 
 # POST http://localhost:8000/api/farms/farm-activity/
 # Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
 # Content-Type: application/json
 
-# # #clear, start_raring
 
 # {
 #     "farm_id":5,
-#     "activity_type":"start_raring",
-#     "bird_type":"Broilers",
-#     "population":200,
-#     "age":3
+#     "activity_type":"register_bot",
+#     "unique_id":"ID1",
+#     "name":"Bot"
     
 # }
+
+#clear, start_raring, register_bot
+
+
+

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
     'core',
     'farms',
     'bots',
@@ -139,5 +140,13 @@ AUTH_USER_MODEL = 'core.User'
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES":[
         "rest_framework.authentication.TokenAuthentication",
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Avix API",
+    "DESCRIPTION": "API documentation for the Avix farm management service.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }

@@ -1,0 +1,406 @@
+openapi: 3.0.3
+info:
+  title: Avix API
+  version: 1.0.0
+  description: API documentation for the Avix farm management service.
+paths:
+  /api/accounts/create/:
+    post:
+      operationId: accounts_create_create
+      summary: Register a user
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+          description: ''
+  /api/accounts/login/:
+    post:
+      operationId: accounts_login_create
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/accounts/logout/:
+    post:
+      operationId: accounts_logout_create
+      summary: Log out the current user
+      tags:
+      - accounts
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+          description: ''
+  /api/accounts/update/:
+    post:
+      operationId: accounts_update_create
+      summary: Update the current user account
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUpdateResponse'
+          description: ''
+  /api/farms/add-farm/:
+    post:
+      operationId: farms_add_farm_create
+      summary: Register a farm
+      tags:
+      - farms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FarmRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FarmRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FarmRegistrationRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmRegistrationResponse'
+          description: ''
+  /api/farms/farm-activity/:
+    post:
+      operationId: farms_farm_activity_create
+      summary: Perform an activity on a farm
+      tags:
+      - farms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FarmActivityRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FarmActivityRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FarmActivityRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmActivityResponse'
+          description: ''
+  /api/farms/farm-details/:
+    get:
+      operationId: farms_farm_details_retrieve
+      summary: Get farm details
+      tags:
+      - farms
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmDetailResponse'
+          description: ''
+  /api/farms/farms-list/:
+    get:
+      operationId: farms_farms_list_list
+      summary: List the current user farms
+      tags:
+      - farms
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Farm'
+          description: ''
+components:
+  schemas:
+    AccountUpdateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    ActivityTypeEnum:
+      enum:
+      - clear
+      - start_raring
+      - register_bot
+      type: string
+      description: |-
+        * `clear` - clear
+        * `start_raring` - start_raring
+        * `register_bot` - register_bot
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    Bird:
+      type: object
+      properties:
+        bird_type:
+          type: string
+          maxLength: 50
+        age:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        population:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        raring_starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - age
+      - bird_type
+      - population
+      - raring_starts_at
+    Bot:
+      type: object
+      properties:
+        unique_id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 25
+        farm_id:
+          type: integer
+      required:
+      - farm_id
+      - unique_id
+    Farm:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        farm_name:
+          type: string
+          readOnly: true
+        farm_address:
+          type: string
+          readOnly: true
+        bots_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - bots_count
+      - created_at
+      - farm_address
+      - farm_name
+      - id
+    FarmActivityRequest:
+      type: object
+      properties:
+        activity_type:
+          $ref: '#/components/schemas/ActivityTypeEnum'
+        farm_id:
+          type: integer
+        bird_type:
+          type: string
+        population:
+          type: integer
+        age:
+          type: integer
+        unique_id:
+          type: string
+        name:
+          type: string
+      required:
+      - activity_type
+      - farm_id
+    FarmActivityResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Bot'
+      required:
+      - status
+    FarmDetailResponse:
+      type: object
+      properties:
+        farm_info:
+          $ref: '#/components/schemas/Farm'
+        bird_info:
+          $ref: '#/components/schemas/Bird'
+      required:
+      - farm_info
+    FarmRegistrationRequest:
+      type: object
+      properties:
+        farm_name:
+          type: string
+        farm_address:
+          type: string
+        bird_type:
+          type: string
+        age:
+          type: integer
+        population:
+          type: integer
+      required:
+      - farm_address
+      - farm_name
+    FarmRegistrationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    LogoutResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    RegistrationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    UserRegistration:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password_confirmation:
+          type: string
+          writeOnly: true
+        phone_number:
+          type: string
+          maxLength: 128
+      required:
+      - phone_number
+      - username
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

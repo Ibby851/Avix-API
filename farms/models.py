@@ -26,7 +26,13 @@ class Bird(models.Model):
     population = models.IntegerField()
     raring_starts_at = models.DateTimeField(auto_now_add=True)
 
-
+class Reading(models.Model):
+    bot_unique_id = models.CharField(max_length=255)
+    temperature = models.FloatField()
+    humidity = models.FloatField()
+    ammonia = models.FloatField()
+    recorded_at = models.DateTimeField(auto_now_add=True)
+    zone_index = models.IntegerField()
 
 
     
