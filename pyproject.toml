@@ -14,7 +14,9 @@ dependencies = [
     "djangorestframework>=3.18.0",
     "dotenv>=0.9.9",
     "drf-spectacular>=0.30.0",
+    "gunicorn>=26.2.0",
     "paho-mqtt>=2.1.0",
+    "psycopg2[binary]>=2.9.13",
 ]
 
 [project.scripts]
