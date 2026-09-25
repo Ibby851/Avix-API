@@ -29,7 +29,8 @@ SECRET_KEY = 'django-insecure-wcg^l=8vrm)aszgy(e7*7v@mi8b-z)lwnje&he&rbvdvq%a4n5
 DEBUG = True
 
 ALLOWED_HOSTS = ["avix-api.onrender.com"]
-CSRF_TRUSTED_ORIGINS = ["https://avix-api.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://avix-api.onrender.com", 'http://localhost:5173', 'http://127.0.0.1:5173']
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", 'http://127.0.0.1:5173']
 
 
 # Application definition
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'phonenumber_field',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
