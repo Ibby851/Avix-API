@@ -1,4 +1,4 @@
-# POST http://localhost:8000/api/accounts/login/
+# POST http://localhost:8000/api/core/login/
 # Content-Type: application/json
 
 # {
@@ -6,60 +6,90 @@
 #     "password":"password"
 # }
 
-# POST http://localhost:8000/api/accounts/logout/
-# Authorization: Token b33c6e14ba13c71f6272a57670ba0dc1bed8a9d1
 
-# POST http://localhost:8000/api/accounts/update/
+# POST  http://localhost:8000/api/core/accounts/register/
 # Content-Type: application/json
-# Authorization: Token 08faf0bd5f749cf7a5319cb96e5609bf9faf0df7
 
 # {
-#     "username":"Apeke",
-#     "first_name":"Idowu",
-#     "last_name":"Roheemat",
-#     "phone_number":"+2349031849375",
-#     "email":"brahmzcodes@gamil.com"
+#     "username":,
+#     "first_name":,
+#     "last_name":,
+#     "phone_number":,
+#     "email":,
+#     "password":,
+#     "password_confirmation":
 # }
 
-# POST http://localhost:8000/api/farms/add-farm/
+# POST http://localhost:8000/api/core/logout/
 # Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+
+# PATCH  http://localhost:8000/api/core/accounts/update/
 # Content-Type: application/json
+# Authorization: Token 81a2e3bbc8e08e1531dc8372d86000a82b4a0815
+
 
 # {
-#     "farm_name":"Farm 5",
-#     "farm_address":"Mayfair",
-#     "bird_type":"Broilers",
-#     "age":4,
-#     "population":100
-
+#     "username":,
+#     "first_name":,
+#     "last_name":,
+#     "phone_number":,
+#     "email":,
+#     "password":,
+#     "password_confirmation":
 # }
+
+
+
+# GET http://localhost:8000/api/core/view-profile/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
+# {
+#   "first_name": "Idowu",
+#   "last_name": "Ibraheem",
+#   "email": "ibraheemidowu851@gmail.com",
+#   "username": "Alaba",
+#   "phone_number": "+2349155645315",
+#   "farms_count": 5,
+#   "bots_count": 1
+# }
+
 
 
 #  GET http://localhost:8000/api/farms/farms-list/
-#  Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
-# GET http://localhost:8000/api/farms/farm-details/
-# Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+
+# #  GET http://localhost:8000/api/farms/farm-detail/1
+#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+
+
+#  GET http://localhost:8000/api/farms/farm-house-details/1
+#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+
+#   POST  http://localhost:8000/api/farms/farm-house/register-device/
+#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 # Content-Type: application/json
 
 # {
-#     "farm_id":5
+#     "id":1,
+#     "unique_id":"AviX Bot 1001",
+#     "name":"My Bot"
 # }
 
-# POST http://localhost:8000/api/farms/farm-activity/
-# Authorization: Token baff546ede2543e6b4831674d483d8224db053c5
+# POST http://localhost:8000/api/farms/add-house/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 # Content-Type: application/json
 
-
 # {
-#     "farm_id":5,
-#     "activity_type":"register_bot",
-#     "unique_id":"ID1",
-#     "name":"Bot"
+#     "id":1,
+#     "tracks":3,
+#     "name":"New House",
+#     "zones":{
+#         "1":[1, 2, 3],
+#         "2":[1, 2, 3],
+#         "3":[1, 2, 3]
+#     }
     
+
 # }
-
-#clear, start_raring, register_bot
-
-
 

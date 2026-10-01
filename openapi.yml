@@ -4,17 +4,28 @@ info:
   version: 1.0.0
   description: API documentation for the Avix farm management service.
 paths:
-  /api/accounts/create/:
+  /api/core/accounts/register/:
     post:
-      operationId: accounts_create_create
+      operationId: core_accounts_register_create
       summary: Register a user
       tags:
-      - accounts
+      - core
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UserRegistration'
+            examples:
+              RegistrationRequest:
+                value:
+                  username: alaba_user
+                  first_name: Alaba
+                  last_name: Adebayo
+                  phone_number: '+2348012345678'
+                  email: alaba@example.com
+                  password: ExamplePass123!
+                  password_confirmation: ExamplePass123!
+                summary: Registration request
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/UserRegistration'
@@ -31,24 +42,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RegistrationResponse'
+              examples:
+                RegistrationResponse:
+                  value:
+                    status: success
+                  summary: Registration response
           description: ''
-  /api/accounts/login/:
-    post:
-      operationId: accounts_login_create
+  /api/core/accounts/update/:
+    patch:
+      operationId: core_accounts_update_partial_update
+      summary: Update the current user account
       tags:
-      - accounts
+      - core
       requestBody:
         content:
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/AuthToken'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/AuthToken'
           application/json:
             schema:
-              $ref: '#/components/schemas/AuthToken'
-        required: true
+              $ref: '#/components/schemas/PatchedUserRegistration'
+            examples:
+              AccountUpdateRequest:
+                value:
+                  first_name: Alaba
+                  last_name: Adebayo
+                  phone_number: '+2348012345678'
+                  email: alaba@example.com
+                summary: Account update request
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRegistration'
       security:
       - tokenAuth: []
       responses:
@@ -56,14 +80,55 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AuthToken'
+                $ref: '#/components/schemas/AccountUpdateResponse'
+              examples:
+                AccountUpdateResponse:
+                  value:
+                    status: success
+                  summary: Account update response
           description: ''
-  /api/accounts/logout/:
+  /api/core/login/:
     post:
-      operationId: accounts_logout_create
+      operationId: core_login_create
+      summary: Log in with username and password
+      tags:
+      - core
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              LoginRequest:
+                value:
+                  username: alaba_user
+                  password: ExamplePass123!
+                summary: Login request
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              examples:
+                LoginResponse:
+                  value:
+                    token: 0123456789abcdef0123456789abcdef01234567
+                  summary: Login response
+          description: ''
+  /api/core/logout/:
+    post:
+      operationId: core_logout_create
       summary: Log out the current user
       tags:
-      - accounts
+      - core
       security:
       - tokenAuth: []
       - {}
@@ -73,25 +138,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogoutResponse'
+              examples:
+                LogoutResponse:
+                  value:
+                    status: success
+                  summary: Logout response
           description: ''
-  /api/accounts/update/:
-    post:
-      operationId: accounts_update_create
-      summary: Update the current user account
+  /api/core/view-profile/:
+    get:
+      operationId: core_view_profile_retrieve
+      summary: View the current user profile
       tags:
-      - accounts
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-        required: true
+      - core
       security:
       - tokenAuth: []
       responses:
@@ -99,8 +157,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountUpdateResponse'
+                $ref: '#/components/schemas/Profile'
+              examples:
+                ProfileResponse:
+                  value:
+                    first_name: Alaba
+                    last_name: Adebayo
+                    email: alaba@example.com
+                    username: alaba_user
+                    phone_number: '+2348012345678'
+                    farms_count: 2
+                    bots_count: 1
+                  summary: Profile response
           description: ''
+
+          
   /api/farms/add-farm/:
     post:
       operationId: farms_add_farm_create
@@ -186,6 +257,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Farm'
+              examples:
+                FarmListResponse:
+                  value:
+                  - id: 1
+                    name: Green Valley Farm
+                    address: 12 Farm Road, Ibadan
+                    devices_count: 1
+                    created_at: '2026-10-01T09:30:00Z'
+                  summary: Farm list response
           description: ''
 components:
   schemas:
@@ -206,22 +286,6 @@ components:
         * `clear` - clear
         * `start_raring` - start_raring
         * `register_bot` - register_bot
-    AuthToken:
-      type: object
-      properties:
-        username:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
-        token:
-          type: string
-          readOnly: true
-      required:
-      - password
-      - token
-      - username
     Bird:
       type: object
       properties:
@@ -267,13 +331,13 @@ components:
         id:
           type: integer
           readOnly: true
-        farm_name:
+        name:
           type: string
           readOnly: true
-        farm_address:
+        address:
           type: string
           readOnly: true
-        bots_count:
+        devices_count:
           type: integer
           readOnly: true
         created_at:
@@ -281,11 +345,11 @@ components:
           format: date-time
           readOnly: true
       required:
-      - bots_count
+      - address
       - created_at
-      - farm_address
-      - farm_name
+      - devices_count
       - id
+      - name
     FarmActivityRequest:
       type: object
       properties:
@@ -349,13 +413,99 @@ components:
           type: string
       required:
       - status
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+      - token
     LogoutResponse:
       type: object
       properties:
-        detail:
+        status:
           type: string
       required:
-      - detail
+      - status
+    PatchedUserRegistration:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password_confirmation:
+          type: string
+          writeOnly: true
+        phone_number:
+          type: string
+          maxLength: 128
+    Profile:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        phone_number:
+          type: string
+          maxLength: 128
+        farms_count:
+          type: integer
+          readOnly: true
+        bots_count:
+          type: integer
+          readOnly: true
+      required:
+      - bots_count
+      - farms_count
+      - phone_number
+      - username
     RegistrationResponse:
       type: object
       properties:

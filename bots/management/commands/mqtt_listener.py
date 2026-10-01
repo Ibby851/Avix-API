@@ -12,7 +12,9 @@ class Command(BaseCommand):
             client.subscribe('environment/readings')
         def on_message(client, userdata, msg):
             reading = json.loads(msg.payload.decode())
-            Reading.objects.create(bot_unique_id=reading.get('device_id'), temperature=reading.get('temperature_c'), ammonia=reading.get('ammonia_ppm'), humidity=reading.get('humidity'), recorded_at=dt.fromisoformat(reading.get('timestamp').replace('Z', "+00:00")), zone_index=reading.get('zone_index'))
+            bot = Bot.objects.get(unique_id=reading.get('device_id'))
+            farm = bot.farm
+            Reading.objects.create(bot=bot, farm=farm,temperature=reading.get('temperature_c'), ammonia=reading.get('ammonia_ppm'), humidity=reading.get('humidity'), recorded_at=dt.fromisoformat(reading.get('timestamp').replace('Z', "+00:00")), zone_index=reading.get('zone_index'))
             print(f"TOPIC: {msg.topic}")
             print(f"DATA RECEIVED: {json.loads(msg.payload.decode())}")
 

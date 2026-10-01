@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiExample, extend_schema, inline_serializer
 from .serializers import *
 from .models import *
 # Create your views here.
@@ -45,6 +45,19 @@ class FarmListView(APIView):
     @extend_schema(
         summary='List the current user farms',
         responses=FarmSerializer(many=True),
+        examples=[
+            OpenApiExample(
+                'Farm list response',
+                value={
+                    'id': 1,
+                    'name': 'Green Valley Farm',
+                    'address': '12 Farm Road, Ibadan',
+                    'devices_count': 1,
+                    'created_at': '2026-10-01T09:30:00Z',
+                },
+                response_only=True,
+            ),
+        ],
     )
     def get(self, request):
         farms = Farm.objects.filter(farmer=request.user)
@@ -68,63 +81,44 @@ class FarmDetailView(APIView):
             },
         ),
     )
-    def get(self, request):
-        farm_obj = Farm.objects.get(id=request.data.get('farm_id'))
+    def get(self, request, id):
+        farm_obj = Farm.objects.get(id=id)
         farm_serializer = FarmSerializer(farm_obj)
-        if Bird.objects.filter(farm=farm_obj).exists():
-            bird = Bird.objects.get(farm=farm_obj) 
-            bird_serializer = BirdSerializer(bird)
-            return Response({'farm_info':farm_serializer.data, 'bird_info':bird_serializer.data})
-        return Response({'farm_info':farm_serializer.data})
+        house_serializer = HouseSerializer(farm_obj.houses.all(), many=True)
+        return Response({'farm_detail':farm_serializer.data, 'houses_details':house_serializer.data})
 
-class FarmActivityView(APIView):
+
+
+class HouseDetail(APIView):
     permission_classes = [IsAuthenticated]
+    def get(self, reqeuest, id):
+        house_obj = House.objects.get(id=id)
+        house_serializer = HouseSerializer(house_obj)
+        return Response(house_serializer.data)
 
-    @extend_schema(
-        summary='Perform an activity on a farm',
-        request=inline_serializer(
-            name='FarmActivityRequest',
-            fields={
-                'activity_type': serializers.ChoiceField(
-                    choices=['clear', 'start_raring', 'register_bot'],
-                ),
-                'farm_id': serializers.IntegerField(),
-                'bird_type': serializers.CharField(required=False),
-                'population': serializers.IntegerField(required=False),
-                'age': serializers.IntegerField(required=False),
-                'unique_id': serializers.CharField(required=False),
-                'name': serializers.CharField(required=False),
-            },
-        ),
-        responses=inline_serializer(
-            name='FarmActivityResponse',
-            fields={
-                'status': serializers.CharField(),
-                'message': serializers.CharField(required=False),
-                'data': BotSerializer(required=False),
-            },
-        ),
-    )
+class RegisterBot(APIView):
     def post(self, request):
-        activity_type = request.data.get('activity_type')
-        farm_obj = Farm.objects.get(id=request.data.get('farm_id'))
-        if activity_type == 'clear':
-            if Bird.objects.filter(farm=farm_obj).exists():
-                bird = Bird.objects.get(farm=farm_obj)
-                bird.delete()
-                return Response({'status':'success'},status=status.HTTP_200_OK)
-            return Response({'status':'fail', 'message':'Farm is currenttly empty'})
-        elif activity_type == 'start_raring':
-            bird = Bird.objects.create(farm=farm_obj, bird_type=request.data.get('bird_type'), population=request.data.get('population'), age=request.data.get('age'))
-            return Response({'status':'success'}, status=status.HTTP_201_CREATED)
-        elif activity_type == "register_bot":
-            if Bot.objects.filter(unique_id=request.data.get('unique_id')).exists():
-                return Response({'status':'fail'})
-            else:
-                data = request.data
-                bot = Bot.objects.create(farm=Farm.objects.get(id=data.get('farm_id')), unique_id=data.get('unique_id'), name=data.get('name'))
-                serializer = BotSerializer(bot)
-                return Response({'status':'success', 'data':serializer.data})
+        if Bot.objects.filter(unique_id=request.data.get('unique_id')).exists():
+            return Response({'status':'fail','message':'Bot has already been registered'})
+        house = House.objects.get(id=request.data.get('id'))
+        bot = Bot.objects.create(house=house, unique_id=request.data.get('unique_id'),name=request.data.get('name'))
+        bot_serializer = BotSerializer(bot)
+        return Response({'status':'success', 'bot_data':bot_serializer.data})
+
+class RegisterHouse(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        data = request.data
+        name = request.data.get('name')
+        farm = Farm.objects.get(id=data.get('id'))
+        if House.objects.filter(farm=farm,name=name).exists():
+            return Response({'status':'fail', 'messagge':'This house already exist on your farm'})
+        house = House.objects.create(name=data.get('name'), farm=farm, zones=data.get('zones'), tracks=data.get('tracks'))
+        house_serializer = HouseSerializer(house)
+        return Response({"status":'success', 'house_data':house_serializer.data})
+
+        
+
             
         
         

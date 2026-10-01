@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from core.models import User
+from farms.serializers import FarmSerializer
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -45,4 +46,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         instance.phone_number = validated_data.get('phone_number', instance.phone_number)
         instance.save()
         return instance
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    farms_count = serializers.SerializerMethodField()
+    bots_count = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'phone_number', 'farms_count', 'bots_count']
+
+    def get_farms_count(self, obj) -> int:
+        return obj.farms.count()
+
+    def get_bots_count(self, obj) -> int:
+        return sum([farm.bots_count() for farm in obj.farms.all()])
     

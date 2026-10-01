@@ -28,7 +28,8 @@ SECRET_KEY = 'django-insecure-wcg^l=8vrm)aszgy(e7*7v@mi8b-z)lwnje&he&rbvdvq%a4n5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["avix-api.onrender.com"]
+# ALLOWED_HOSTS = ["avix-api.onrender.com", '127.0.0.1:8000', 'localhost:8000']
+ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["https://avix-api.onrender.com", 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://10.105.82.247:5173']
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173", 'http://10.105.82.247:5173']
 CORS_ALLOW_CREDENTIALS = True
