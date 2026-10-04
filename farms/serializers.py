@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Farm, Bird, Bot, Reading, House
+from .models import Farm, Bird, Bot, Reading, House, Worker
 
 
 
@@ -9,23 +9,28 @@ class FarmRegistrationSerializer(serializers.ModelSerializer):
         fields = ['name', 'address', 'farmer']
         read_only_fields = ['farmer']
     def validate(self, attrs):
-        if Farm.objects.filter(farmer=self.context.get('request').user, farm_name=attrs.get('name'), farm_address=attrs.get('address')).exists():
-            raise serializers.ValidationError('You already register this farm')
+        if Farm.objects.filter(farmer=self.context.get('request').user,name=attrs.get('name'), address=attrs.get('address')).exists():
+            raise serializers.ValidationError(f"You already have a farm with the name '{attrs.get('name')}' and address '{attrs.get('address')}'")
         return attrs
     def create(self, validated_data):
-        farm = Farm.objects.create(farmer=validated_data.get('farmer'), farm_address=validated_data.get('address'), farm_name=validated_data.get('name'))
+        farm = Farm.objects.create(farmer=validated_data.get('farmer'), address=validated_data.get('address'), name=validated_data.get('name'))
         return farm
 
 
 class FarmSerializer(serializers.ModelSerializer):
     houses_count = serializers.SerializerMethodField()
+    workers_count = serializers.SerializerMethodField()
     class Meta:
         model = Farm
-        fields = ['id','name', 'address','houses_count','created_at']
+        fields = ['id','name', 'address','houses_count','workers_count','created_at']
         read_only_fields = fields
 
     def get_houses_count(self, obj) -> int:
         return obj.houses.count()
+
+    def get_workers_count(self, obj) -> int:
+        return Worker.objects.filter(farm_id=obj.id).count()
+
 
 class BirdSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,4 +66,11 @@ class HouseSerializer(serializers.ModelSerializer):
 
     def get_devices_count(self, obj) -> int:
         return obj.bots.count()
+
+
+class WorkerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Worker
+        fields = ['full_name', 'phone_number','role', 'id', 'shift']
+        read_only_fields = ['id']
 

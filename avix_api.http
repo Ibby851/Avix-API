@@ -59,8 +59,8 @@
 #  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 
-# #  GET http://localhost:8000/api/farms/farm-detail/1
-#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# GET http://localhost:8000/api/farms/farm-details/1
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 
 #  GET http://localhost:8000/api/farms/farm-house-details/1
@@ -92,4 +92,31 @@
     
 
 # }
+
+
+
+# POST http://localhost:8000/api/farms/add-farm/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
+
+# {
+#     "farm_name":"Farm 10",
+#     "farm_address":"Mayfair"
+
+# }
+
+
+POST http://localhost:8000/api/farms/farm/add-worker/
+Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+Content-Type: application/json
+
+{
+    "farm_id":1,
+    "full_name":"Ade Kunle",
+    "phone_number":"+2349038384962",
+    "role":"Farm Manager"
+}
+
+
+
 

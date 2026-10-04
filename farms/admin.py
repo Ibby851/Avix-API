@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Farm, Bot, Reading, House
+from .models import Farm, Bot, Reading, House, Worker
 # Register your models here.
 admin.site.register(Farm)
 admin.site.register(Bot)
 admin.site.register(Reading)
 admin.site.register(House)
+admin.site.register(Worker)

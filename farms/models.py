@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-
+from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 User = get_user_model()
 
@@ -45,6 +45,22 @@ class House(models.Model):
     tracks = models.PositiveIntegerField()
     zones = models.JSONField(default=dict)
     created_at = models.DateField(auto_now_add=True)
+
+
+class Worker(models.Model):
+    SHIFT_CHOICES = [
+        ('day', 'Day'),
+        ('night', 'Night'),
+        ('any', "Any")
+    ]
+    farm = models.ForeignKey(Farm, related_name='workers', on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255)
+    phone_number = PhoneNumberField(unique=True)
+    role = models.CharField(max_length=100)
+    added_at = models.DateField(auto_now_add=True)
+    shift = models.CharField(max_length=100, choices=SHIFT_CHOICES, default='any')
+
+
     
 
 

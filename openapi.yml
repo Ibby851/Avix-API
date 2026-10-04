@@ -4,181 +4,128 @@ info:
   version: 1.0.0
   description: API documentation for the Avix farm management service.
 paths:
-  /api/core/accounts/register/:
-    post:
-      operationId: core_accounts_register_create
-      summary: Register a user
-      tags:
-      - core
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-            examples:
-              RegistrationRequest:
-                value:
-                  username: alaba_user
-                  first_name: Alaba
-                  last_name: Adebayo
-                  phone_number: '+2348012345678'
-                  email: alaba@example.com
-                  password: ExamplePass123!
-                  password_confirmation: ExamplePass123!
-                summary: Registration request
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/UserRegistration'
-        required: true
-      security:
-      - tokenAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/RegistrationResponse'
-              examples:
-                RegistrationResponse:
-                  value:
-                    status: success
-                  summary: Registration response
-          description: ''
-  /api/core/accounts/update/:
-    patch:
-      operationId: core_accounts_update_partial_update
-      summary: Update the current user account
-      tags:
-      - core
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedUserRegistration'
-            examples:
-              AccountUpdateRequest:
-                value:
-                  first_name: Alaba
-                  last_name: Adebayo
-                  phone_number: '+2348012345678'
-                  email: alaba@example.com
-                summary: Account update request
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedUserRegistration'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedUserRegistration'
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AccountUpdateResponse'
-              examples:
-                AccountUpdateResponse:
-                  value:
-                    status: success
-                  summary: Account update response
-          description: ''
   /api/core/login/:
     post:
-      operationId: core_login_create
-      summary: Log in with username and password
       tags:
-      - core
+        - core
+      summary: Log in with username and password
+      operationId: core_login_create
       requestBody:
+        required: true
         content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LoginRequest'
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/LoginRequest'
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-            examples:
-              LoginRequest:
-                value:
-                  username: alaba_user
-                  password: ExamplePass123!
-                summary: Login request
-        required: true
       responses:
         '200':
+          description: Successful login
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
-              examples:
-                LoginResponse:
-                  value:
-                    token: 0123456789abcdef0123456789abcdef01234567
-                  summary: Login response
-          description: ''
+
   /api/core/logout/:
     post:
-      operationId: core_logout_create
-      summary: Log out the current user
       tags:
-      - core
+        - core
+      summary: Log out the current user
+      operationId: core_logout_create
       security:
-      - tokenAuth: []
-      - {}
+        - tokenAuth: []
       responses:
         '200':
+          description: Successful logout
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogoutResponse'
-              examples:
-                LogoutResponse:
-                  value:
-                    status: success
-                  summary: Logout response
-          description: ''
-  /api/core/view-profile/:
-    get:
-      operationId: core_view_profile_retrieve
-      summary: View the current user profile
+
+  /api/core/accounts/register/:
+    post:
       tags:
-      - core
-      security:
-      - tokenAuth: []
+        - core
+      summary: Register a user
+      operationId: core_accounts_register_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
       responses:
         '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+
+  /api/core/accounts/update/:
+    patch:
+      tags:
+        - core
+      summary: Update the current user account
+      operationId: core_accounts_update_partial_update
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRegistration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRegistration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserRegistration'
+      responses:
+        '200':
+          description: Account updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUpdateResponse'
+
+  /api/core/view-profile/:
+    get:
+      tags:
+        - core
+      summary: View the current user profile
+      operationId: core_view_profile_retrieve
+      security:
+        - tokenAuth: []
+      responses:
+        '200':
+          description: User profile data
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Profile'
-              examples:
-                ProfileResponse:
-                  value:
-                    first_name: Alaba
-                    last_name: Adebayo
-                    email: alaba@example.com
-                    username: alaba_user
-                    phone_number: '+2348012345678'
-                    farms_count: 2
-                    bots_count: 1
-                  summary: Profile response
-          description: ''
 
-          
   /api/farms/add-farm/:
     post:
-      operationId: farms_add_farm_create
-      summary: Register a farm
       tags:
-      - farms
+        - farms
+      summary: Register a farm
+      operationId: farms_add_farm_create
+      security:
+        - tokenAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -189,207 +136,251 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/FarmRegistrationRequest'
-        required: true
-      security:
-      - tokenAuth: []
       responses:
         '200':
+          description: Farm registered successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FarmRegistrationResponse'
-          description: ''
-  /api/farms/farm-activity/:
-    post:
-      operationId: farms_farm_activity_create
-      summary: Perform an activity on a farm
-      tags:
-      - farms
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FarmActivityRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/FarmActivityRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/FarmActivityRequest'
-        required: true
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FarmActivityResponse'
-          description: ''
-  /api/farms/farm-details/:
-    get:
-      operationId: farms_farm_details_retrieve
-      summary: Get farm details
-      tags:
-      - farms
-      security:
-      - tokenAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FarmDetailResponse'
-          description: ''
+
   /api/farms/farms-list/:
     get:
-      operationId: farms_farms_list_list
-      summary: List the current user farms
       tags:
-      - farms
+        - farms
+      summary: List the farms for the current user
+      operationId: farms_farms_list_list
       security:
-      - tokenAuth: []
+        - tokenAuth: []
       responses:
         '200':
+          description: Farms list
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Farm'
-              examples:
-                FarmListResponse:
-                  value:
-                  - id: 1
-                    name: Green Valley Farm
-                    address: 12 Farm Road, Ibadan
-                    devices_count: 1
-                    created_at: '2026-10-01T09:30:00Z'
-                  summary: Farm list response
-          description: ''
+
+  /api/farms/farm-details/{id}/:
+    get:
+      tags:
+        - farms
+      summary: Get the details of a farm
+      operationId: farms_farm_details_retrieve
+      security:
+        - tokenAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Farm details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmDetailResponse'
+
+  /api/farms/farm-house-details/{id}/:
+    get:
+      tags:
+        - farms
+      summary: Get details of a farm house
+      operationId: farms_house_detail_retrieve
+      security:
+        - tokenAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: House details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+
+  /api/farms/farm-house/register-device/:
+    post:
+      tags:
+        - farms
+      summary: Register a farm device or bot for a house
+      operationId: farms_register_bot_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBotRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterBotRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterBotRequest'
+      responses:
+        '200':
+          description: Bot registration result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterBotResponse'
+
+  /api/farms/add-house/:
+    post:
+      tags:
+        - farms
+      summary: Register a house on a farm
+      operationId: farms_register_house_create
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterHouseRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterHouseRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterHouseRequest'
+      responses:
+        '200':
+          description: House registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterHouseResponse'
 components:
   schemas:
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+
+    LogoutResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    UserRegistration:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        password_confirmation:
+          type: string
+          writeOnly: true
+      required:
+        - first_name
+        - last_name
+        - username
+        - email
+        - phone_number
+        - password
+        - password_confirmation
+
+    PatchedUserRegistration:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        password_confirmation:
+          type: string
+          writeOnly: true
+
+    RegistrationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
     AccountUpdateResponse:
       type: object
       properties:
         status:
           type: string
       required:
-      - status
-    ActivityTypeEnum:
-      enum:
-      - clear
-      - start_raring
-      - register_bot
-      type: string
-      description: |-
-        * `clear` - clear
-        * `start_raring` - start_raring
-        * `register_bot` - register_bot
-    Bird:
+        - status
+
+    Profile:
       type: object
       properties:
-        bird_type:
+        first_name:
           type: string
-          maxLength: 50
-        age:
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        phone_number:
+          type: string
+        farms_count:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-        population:
-          type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
-        raring_starts_at:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - age
-      - bird_type
-      - population
-      - raring_starts_at
-    Bot:
-      type: object
-      properties:
-        unique_id:
-          type: string
-          maxLength: 255
-        name:
-          type: string
-          maxLength: 25
-        farm_id:
+        bots_count:
           type: integer
       required:
-      - farm_id
-      - unique_id
-    Farm:
-      type: object
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        name:
-          type: string
-          readOnly: true
-        address:
-          type: string
-          readOnly: true
-        devices_count:
-          type: integer
-          readOnly: true
-        created_at:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - address
-      - created_at
-      - devices_count
-      - id
-      - name
-    FarmActivityRequest:
-      type: object
-      properties:
-        activity_type:
-          $ref: '#/components/schemas/ActivityTypeEnum'
-        farm_id:
-          type: integer
-        bird_type:
-          type: string
-        population:
-          type: integer
-        age:
-          type: integer
-        unique_id:
-          type: string
-        name:
-          type: string
-      required:
-      - activity_type
-      - farm_id
-    FarmActivityResponse:
-      type: object
-      properties:
-        status:
-          type: string
-        message:
-          type: string
-        data:
-          $ref: '#/components/schemas/Bot'
-      required:
-      - status
-    FarmDetailResponse:
-      type: object
-      properties:
-        farm_info:
-          $ref: '#/components/schemas/Farm'
-        bird_info:
-          $ref: '#/components/schemas/Bird'
-      required:
-      - farm_info
+        - first_name
+        - last_name
+        - email
+        - username
+        - phone_number
+        - farms_count
+        - bots_count
+
     FarmRegistrationRequest:
       type: object
       properties:
@@ -404,153 +395,149 @@ components:
         population:
           type: integer
       required:
-      - farm_address
-      - farm_name
+        - farm_name
+        - farm_address
+
     FarmRegistrationResponse:
       type: object
       properties:
         status:
           type: string
       required:
-      - status
-    LoginRequest:
+        - status
+
+    Farm:
       type: object
       properties:
-        username:
+        id:
+          type: integer
+        name:
           type: string
-        password:
+        address:
           type: string
+        houses_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
       required:
-      - password
-      - username
-    LoginResponse:
+        - id
+        - name
+        - address
+        - houses_count
+        - created_at
+
+    HouseBot:
       type: object
       properties:
-        token:
+        name:
+          type: string
+        unique_id:
           type: string
       required:
-      - token
-    LogoutResponse:
+        - name
+        - unique_id
+
+    House:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        devices_count:
+          type: integer
+        tracks:
+          type: integer
+        zones:
+          type: integer
+        bots:
+          type: array
+          items:
+            $ref: '#/components/schemas/HouseBot'
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - devices_count
+        - tracks
+        - zones
+        - bots
+        - created_at
+
+    FarmDetailResponse:
+      type: object
+      properties:
+        farm_detail:
+          $ref: '#/components/schemas/Farm'
+        houses_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/House'
+      required:
+        - farm_detail
+        - houses_details
+
+    RegisterBotRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: House ID
+        unique_id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - unique_id
+        - name
+
+    RegisterBotResponse:
       type: object
       properties:
         status:
           type: string
+        bot_data:
+          $ref: '#/components/schemas/HouseBot'
       required:
-      - status
-    PatchedUserRegistration:
+        - status
+        - bot_data
+
+    RegisterHouseRequest:
       type: object
       properties:
-        first_name:
-          type: string
-          maxLength: 150
-        last_name:
-          type: string
-          maxLength: 150
-        password:
-          type: string
-          writeOnly: true
-        email:
-          title: Email address
-          oneOf:
-          - type: string
-            format: email
-            maxLength: 254
-          - type: string
-            maxLength: 0
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        password_confirmation:
-          type: string
-          writeOnly: true
-        phone_number:
-          type: string
-          maxLength: 128
-    Profile:
-      type: object
-      properties:
-        first_name:
-          type: string
-          maxLength: 150
-        last_name:
-          type: string
-          maxLength: 150
-        email:
-          title: Email address
-          oneOf:
-          - type: string
-            format: email
-            maxLength: 254
-          - type: string
-            maxLength: 0
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        phone_number:
-          type: string
-          maxLength: 128
-        farms_count:
+        id:
           type: integer
-          readOnly: true
-        bots_count:
+          description: Farm ID
+        name:
+          type: string
+        zones:
           type: integer
-          readOnly: true
+        tracks:
+          type: integer
       required:
-      - bots_count
-      - farms_count
-      - phone_number
-      - username
-    RegistrationResponse:
+        - id
+        - name
+        - zones
+        - tracks
+
+    RegisterHouseResponse:
       type: object
       properties:
         status:
           type: string
+        house_data:
+          $ref: '#/components/schemas/House'
       required:
-      - status
-    UserRegistration:
-      type: object
-      properties:
-        first_name:
-          type: string
-          maxLength: 150
-        last_name:
-          type: string
-          maxLength: 150
-        password:
-          type: string
-          writeOnly: true
-        email:
-          title: Email address
-          oneOf:
-          - type: string
-            format: email
-            maxLength: 254
-          - type: string
-            maxLength: 0
-        username:
-          type: string
-          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
-            only.
-          pattern: ^[\w.@+-]+$
-          maxLength: 150
-        password_confirmation:
-          type: string
-          writeOnly: true
-        phone_number:
-          type: string
-          maxLength: 128
-      required:
-      - phone_number
-      - username
+        - status
+        - house_data
+
   securitySchemes:
     tokenAuth:
       type: apiKey
       in: header
       name: Authorization
-      description: Token-based authentication with required prefix "Token"
+      description: Token-based authentication using the Django REST Framework token scheme.

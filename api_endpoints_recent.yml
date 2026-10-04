@@ -1,0 +1,581 @@
+openapi: 3.0.3
+info:
+  title: Avix API
+  version: 1.2.0
+  description: Current API reference for Avix account and farm management endpoints.
+servers:
+  - url: /
+    description: Current API host
+tags:
+  - name: Core
+    description: Authentication and account endpoints.
+  - name: Farms
+    description: Farms, houses, devices, and workers.
+paths:
+  /api/core/login/:
+    post:
+      tags: [Core]
+      operationId: login
+      summary: Log in
+      description: Exchange a username and password for a DRF authentication token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid credentials or request.
+  /api/core/logout/:
+    post:
+      tags: [Core]
+      operationId: logout
+      summary: Log out
+      description: Delete the authenticated user's token.
+      security:
+        - tokenAuth: []
+      responses:
+        '200':
+          description: Logout result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '401':
+          description: Authentication required.
+        '500':
+          description: The current view does not guard unauthenticated requests; a missing token can cause a server error.
+  /api/core/accounts/register/:
+    post:
+      tags: [Core]
+      operationId: registerAccount
+      summary: Register an account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRegistrationRequest'
+      responses:
+        '200':
+          description: Registration result. Serializer validation errors are also returned with HTTP 200 by the current view.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StatusResponse'
+                  - $ref: '#/components/schemas/ValidationErrors'
+  /api/core/accounts/update/:
+    patch:
+      tags: [Core]
+      operationId: updateAccount
+      summary: Update the authenticated account
+      description: Updates profile fields. The current serializer does not change the password through this endpoint.
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountUpdateRequest'
+      responses:
+        '200':
+          description: Update result. Serializer validation errors are also returned with HTTP 200 by the current view.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StatusResponse'
+                  - $ref: '#/components/schemas/ValidationErrors'
+        '401':
+          description: Authentication required.
+  /api/core/view-profile/:
+    get:
+      tags: [Core]
+      operationId: getProfile
+      summary: Get the authenticated account profile
+      security:
+        - tokenAuth: []
+      responses:
+        '200':
+          description: Profile data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Authentication required.
+  /api/farms/add-farm/:
+    post:
+      tags: [Farms]
+      operationId: registerFarm
+      summary: Register a farm
+      description: The farm is assigned to the authenticated user. Bird fields are not currently persisted by this endpoint.
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FarmRegistrationRequest'
+      responses:
+        '200':
+          description: Farm data or serializer validation errors; the current view returns both with HTTP 200.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/FarmRegistrationResponse'
+                  - $ref: '#/components/schemas/ValidationErrors'
+        '401':
+          description: Authentication required.
+  /api/farms/farms-list/:
+    get:
+      tags: [Farms]
+      operationId: listFarms
+      summary: List the authenticated user's farms
+      security:
+        - tokenAuth: []
+      responses:
+        '200':
+          description: Farms belonging to the authenticated user.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Farm'
+        '401':
+          description: Authentication required.
+  /api/farms/farm-details/{id}/:
+    get:
+      tags: [Farms]
+      operationId: getFarmDetails
+      summary: Get a farm and its houses
+      security:
+        - tokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Farm ID.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Farm and house details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FarmDetails'
+        '401':
+          description: Authentication required.
+        '500':
+          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
+  /api/farms/farm-house-details/{id}/:
+    get:
+      tags: [Farms]
+      operationId: getHouseDetails
+      summary: Get a house
+      security:
+        - tokenAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: House ID.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: House details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/House'
+        '401':
+          description: Authentication required.
+        '500':
+          description: Missing-house lookup errors are not translated into an HTTP 404 by the current view.
+  /api/farms/farm-house/register-device/:
+    post:
+      tags: [Farms]
+      operationId: registerDevice
+      summary: Register a device for a house
+      description: Requires DRF token authentication.
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceRequest'
+      responses:
+        '200':
+          description: Registration result. Duplicate device IDs return a failure status and message.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RegisterDeviceSuccess'
+                  - $ref: '#/components/schemas/MessageStatusResponse'
+        '401':
+          description: Authentication required.
+        '500':
+          description: Missing-house lookup errors are not translated into an HTTP 404 by the current view.
+  /api/farms/add-house/:
+    post:
+      tags: [Farms]
+      operationId: registerHouse
+      summary: Add a house to a farm
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterHouseRequest'
+      responses:
+        '200':
+          description: Registration result. A duplicate house uses the current misspelled `messagge` response property.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/RegisterHouseSuccess'
+                  - $ref: '#/components/schemas/HouseExistsResponse'
+        '401':
+          description: Authentication required.
+        '500':
+          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
+  /api/farms/farm/add-worker/:
+    post:
+      tags: [Farms]
+      operationId: addWorker
+      summary: Add a worker to a farm
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddWorkerRequest'
+      responses:
+        '201':
+          description: Worker created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+        '200':
+          description: Serializer validation errors. The current view returns these with HTTP 200.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrors'
+        '401':
+          description: Authentication required.
+        '500':
+          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
+  /api/schema/:
+    get:
+      tags: [Core]
+      operationId: getOpenApiSchema
+      summary: Get the generated OpenAPI schema
+      responses:
+        '200':
+          description: OpenAPI schema document.
+          content:
+            application/vnd.oai.openapi:
+              schema:
+                type: object
+            application/yaml:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Send the DRF token as `Authorization: Token <token>`.'
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+          writeOnly: true
+    LoginResponse:
+      type: object
+      required: [token]
+      properties:
+        token:
+          type: string
+    StatusResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          example: success
+    MessageStatusResponse:
+      type: object
+      required: [status, message]
+      properties:
+        status:
+          type: string
+          example: fail
+        message:
+          type: string
+    ValidationErrors:
+      type: object
+      description: Field-keyed serializer errors; the exact keys depend on the submitted data.
+      additionalProperties:
+        oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+    AccountRegistrationRequest:
+      type: object
+      required: [username, phone_number]
+      properties:
+        username:
+          type: string
+          minLength: 5
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+          description: Phone number accepted by django-phonenumber-field, typically E.164.
+        password:
+          type: string
+          format: password
+          writeOnly: true
+        password_confirmation:
+          type: string
+          format: password
+          writeOnly: true
+          description: Must match password when supplied.
+    AccountUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 5
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone_number:
+          type: string
+    Profile:
+      type: object
+      required: [first_name, last_name, email, username, phone_number, farms_count, bots_count]
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        phone_number:
+          type: string
+        farms_count:
+          type: integer
+        bots_count:
+          type: integer
+    FarmRegistrationRequest:
+      type: object
+      required: [farm_name, farm_address]
+      properties:
+        farm_name:
+          type: string
+        farm_address:
+          type: string
+    FarmRegistrationResponse:
+      type: object
+      required: [name, address, farmer, farm_id]
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        farmer:
+          type: integer
+          description: ID of the farm owner.
+        farm_id:
+          type: integer
+    Farm:
+      type: object
+      required: [id, name, address, houses_count, workers_count, created_at]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        houses_count:
+          type: integer
+        workers_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+    Bot:
+      type: object
+      required: [name, unique_id]
+      properties:
+        name:
+          type: string
+        unique_id:
+          type: string
+    House:
+      type: object
+      required: [id, name, devices_count, tracks, zones, bots, created_at]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        devices_count:
+          type: integer
+        tracks:
+          type: integer
+        zones:
+          type: object
+          additionalProperties: true
+          description: JSON data configured for the house's zones.
+        bots:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bot'
+        created_at:
+          type: string
+          format: date
+    FarmDetails:
+      type: object
+      required: [farm_detail, houses_details]
+      properties:
+        farm_detail:
+          $ref: '#/components/schemas/Farm'
+        houses_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/House'
+    RegisterDeviceRequest:
+      type: object
+      required: [id, unique_id, name]
+      properties:
+        id:
+          type: integer
+          description: House ID.
+        unique_id:
+          type: string
+        name:
+          type: string
+    RegisterDeviceSuccess:
+      type: object
+      required: [status, bot_data]
+      properties:
+        status:
+          type: string
+          example: success
+        bot_data:
+          $ref: '#/components/schemas/Bot'
+    RegisterHouseRequest:
+      type: object
+      required: [id, name, zones, tracks]
+      properties:
+        id:
+          type: integer
+          description: Farm ID.
+        name:
+          type: string
+        zones:
+          type: object
+          additionalProperties: true
+        tracks:
+          type: integer
+          minimum: 0
+    RegisterHouseSuccess:
+      type: object
+      required: [status, house_data]
+      properties:
+        status:
+          type: string
+          example: success
+        house_data:
+          $ref: '#/components/schemas/House'
+    HouseExistsResponse:
+      type: object
+      required: [status, messagge]
+      properties:
+        status:
+          type: string
+          example: fail
+        messagge:
+          type: string
+    AddWorkerRequest:
+      type: object
+      required: [farm_id, full_name, phone_number, role]
+      properties:
+        farm_id:
+          type: integer
+        full_name:
+          type: string
+        phone_number:
+          type: string
+        role:
+          type: string
+        shift:
+          type: string
+          enum: [day, night, any]
+          default: any
+          description: Work shift. Optional; defaults to any.
+    Worker:
+      type: object
+      required: [full_name, phone_number, role, id, shift]
+      properties:
+        full_name:
+          type: string
+        phone_number:
+          type: string
+        role:
+          type: string
+        id:
+          type: integer
+        shift:
+          type: string
+          enum: [day, night, any]

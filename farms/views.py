@@ -32,11 +32,14 @@ class FarmRegistrationView(APIView):
         ),
     )
     def post(self, request):
-        data = {'farm_name':request.data.get('farm_name'), 'farm_address':request.data.get('farm_address')}
+        print(request.data)
+        data = {'name':request.data.get('farm_name'), 'address':request.data.get('farm_address')}
         serializer = FarmRegistrationSerializer(data=data, context={'request':request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(farmer=request.user)
-            return Response({'status':'success'})
+        if serializer.is_valid():
+            farm_obj = serializer.save(farmer=request.user)
+            data = serializer.data
+            data['farm_id'] = farm_obj.id
+            return Response(data)
         return Response(serializer.errors)
 
 class FarmListView(APIView):
@@ -97,6 +100,7 @@ class HouseDetail(APIView):
         return Response(house_serializer.data)
 
 class RegisterBot(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         if Bot.objects.filter(unique_id=request.data.get('unique_id')).exists():
             return Response({'status':'fail','message':'Bot has already been registered'})
@@ -116,6 +120,21 @@ class RegisterHouse(APIView):
         house = House.objects.create(name=data.get('name'), farm=farm, zones=data.get('zones'), tracks=data.get('tracks'))
         house_serializer = HouseSerializer(house)
         return Response({"status":'success', 'house_data':house_serializer.data})
+
+
+
+
+class AddWorker(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        data = request.data
+        farm_id = data.pop('farm_id')
+        farm_obj = Farm.objects.get(id=farm_id)
+        serializer = WorkerSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(farm=farm_obj)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors)
 
         
 
