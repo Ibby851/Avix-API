@@ -103,11 +103,11 @@ class RegisterBot(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         if Bot.objects.filter(unique_id=request.data.get('unique_id')).exists():
-            return Response({'status':'fail','message':'Bot has already been registered'})
+            return Response({'status':'fail','message':'Bot has already been registered'}, status=status.HTTP_409_CONFLICT)
         house = House.objects.get(id=request.data.get('id'))
-        bot = Bot.objects.create(house=house, unique_id=request.data.get('unique_id'),name=request.data.get('name'))
+        bot = Bot.objects.create(house=house, unique_id=request.data.get('unique_id'),name=request.data.get('name'), track_number=request.data.get('track_number'))
         bot_serializer = BotSerializer(bot)
-        return Response({'status':'success', 'bot_data':bot_serializer.data})
+        return Response({'status':'success', 'bot_data':bot_serializer.data}, status=status.HTTP_201_CREATED)
 
 class RegisterHouse(APIView):
     permission_classes = [IsAuthenticated]
@@ -116,10 +116,10 @@ class RegisterHouse(APIView):
         name = request.data.get('name')
         farm = Farm.objects.get(id=data.get('id'))
         if House.objects.filter(farm=farm,name=name).exists():
-            return Response({'status':'fail', 'messagge':'This house already exist on your farm'})
+            return Response({'status':'fail', 'messagge':'This house already exist on your farm'}, status=status.HTTP_409_CONFLICT)
         house = House.objects.create(name=data.get('name'), farm=farm, zones=data.get('zones'), tracks=data.get('tracks'))
         house_serializer = HouseSerializer(house)
-        return Response({"status":'success', 'house_data':house_serializer.data})
+        return Response({"status":'success', 'house_data':house_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 

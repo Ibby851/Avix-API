@@ -20,6 +20,7 @@ class Bot(models.Model):
     house = models.ForeignKey('House',related_name='bots', on_delete=models.CASCADE)
     unique_id = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=25, default='AviX Bot')
+    track_number = models.SmallIntegerField()
     installed_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -44,7 +45,7 @@ class House(models.Model):
     name = models.CharField(max_length=255)
     tracks = models.PositiveIntegerField()
     zones = models.JSONField(default=dict)
-    created_at = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Worker(models.Model):

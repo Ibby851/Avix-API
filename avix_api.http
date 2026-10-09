@@ -63,8 +63,8 @@
 # Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 
-#  GET http://localhost:8000/api/farms/farm-house-details/1
-#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+ GET http://localhost:8000/api/farms/farm-house-details/1
+ Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 #   POST  http://localhost:8000/api/farms/farm-house/register-device/
 #  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
@@ -72,8 +72,9 @@
 
 # {
 #     "id":1,
-#     "unique_id":"AviX Bot 1001",
-#     "name":"My Bot"
+#     "unique_id":"Bot3",
+#     "name":"Bot 3",
+#     "track_number":1
 # }
 
 # POST http://localhost:8000/api/farms/add-house/
@@ -83,14 +84,12 @@
 # {
 #     "id":1,
 #     "tracks":3,
-#     "name":"New House",
+#     "name":"House",
 #     "zones":{
 #         "1":[1, 2, 3],
 #         "2":[1, 2, 3],
 #         "3":[1, 2, 3]
 #     }
-    
-
 # }
 
 
@@ -100,22 +99,22 @@
 # Content-Type: application/json
 
 # {
-#     "farm_name":"Farm 10",
+#     "farm_name":"Farm 3",
 #     "farm_address":"Mayfair"
-
 # }
 
 
-POST http://localhost:8000/api/farms/farm/add-worker/
-Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
-Content-Type: application/json
 
-{
-    "farm_id":1,
-    "full_name":"Ade Kunle",
-    "phone_number":"+2349038384962",
-    "role":"Farm Manager"
-}
+# POST http://localhost:8000/api/farms/farm/add-worker/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
+
+# {
+#     "farm_id":1,
+#     "full_name":"Ade Kunle",
+#     "phone_number":"+2349038384962",
+#     "role":"Farm Manager"
+# }
 
 
 

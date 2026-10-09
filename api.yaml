@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: Avix API
-  version: 1.1.0
-  description: API reference for Avix account and farm management endpoints.
+  version: 1.0.0
+  description: API reference for Avix account and farm management.
 servers:
   - url: /
     description: Current API host
@@ -34,13 +34,12 @@ paths:
                 $ref: '#/components/schemas/LoginResponse'
         '400':
           description: Invalid credentials or request.
-
   /api/core/logout/:
     post:
       tags: [Core]
       operationId: logout
       summary: Log out
-      description: Delete the authenticated user's token.
+      description: Delete the current user's authentication token.
       security:
         - tokenAuth: []
       responses:
@@ -52,9 +51,6 @@ paths:
                 $ref: '#/components/schemas/StatusResponse'
         '401':
           description: Authentication required.
-        '500':
-          description: The current view does not guard unauthenticated requests; a missing token can cause a server error.
-
   /api/core/accounts/register/:
     post:
       tags: [Core]
@@ -69,20 +65,19 @@ paths:
               $ref: '#/components/schemas/AccountRegistrationRequest'
       responses:
         '200':
-          description: Registration result. Serializer validation errors are also returned with HTTP 200 by the current view.
+          description: Registration result. Serializer validation errors also use HTTP 200.
           content:
             application/json:
               schema:
                 oneOf:
                   - $ref: '#/components/schemas/StatusResponse'
                   - $ref: '#/components/schemas/ValidationErrors'
-
   /api/core/accounts/update/:
     patch:
       tags: [Core]
       operationId: updateAccount
       summary: Update the authenticated account
-      description: Updates profile fields. The current serializer does not change the password through this endpoint.
+      description: Updates profile fields; this endpoint does not change the account password.
       security:
         - tokenAuth: []
       requestBody:
@@ -93,7 +88,7 @@ paths:
               $ref: '#/components/schemas/AccountUpdateRequest'
       responses:
         '200':
-          description: Update result. Serializer validation errors are also returned with HTTP 200 by the current view.
+          description: Update result. Serializer validation errors also use HTTP 200.
           content:
             application/json:
               schema:
@@ -102,7 +97,6 @@ paths:
                   - $ref: '#/components/schemas/ValidationErrors'
         '401':
           description: Authentication required.
-
   /api/core/view-profile/:
     get:
       tags: [Core]
@@ -119,13 +113,12 @@ paths:
                 $ref: '#/components/schemas/Profile'
         '401':
           description: Authentication required.
-
   /api/farms/add-farm/:
     post:
       tags: [Farms]
       operationId: registerFarm
       summary: Register a farm
-      description: The farm is assigned to the authenticated user. Bird fields are not currently persisted by this endpoint.
+      description: The farm is assigned to the authenticated user. Optional bird fields are accepted but are not currently saved.
       security:
         - tokenAuth: []
       requestBody:
@@ -136,7 +129,7 @@ paths:
               $ref: '#/components/schemas/FarmRegistrationRequest'
       responses:
         '200':
-          description: Farm data or serializer validation errors; the current view returns both with HTTP 200.
+          description: Farm data or serializer validation errors; both use HTTP 200.
           content:
             application/json:
               schema:
@@ -145,7 +138,6 @@ paths:
                   - $ref: '#/components/schemas/ValidationErrors'
         '401':
           description: Authentication required.
-
   /api/farms/farms-list/:
     get:
       tags: [Farms]
@@ -164,7 +156,6 @@ paths:
                   $ref: '#/components/schemas/Farm'
         '401':
           description: Authentication required.
-
   /api/farms/farm-details/{id}/:
     get:
       tags: [Farms]
@@ -189,13 +180,12 @@ paths:
         '401':
           description: Authentication required.
         '500':
-          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
-
+          description: A farm that does not exist is not translated to HTTP 404 by the current view.
   /api/farms/farm-house-details/{id}/:
     get:
       tags: [Farms]
       operationId: getHouseDetails
-      summary: Get a house
+      summary: Get a house and its devices
       security:
         - tokenAuth: []
       parameters:
@@ -215,14 +205,14 @@ paths:
         '401':
           description: Authentication required.
         '500':
-          description: Missing-house lookup errors are not translated into an HTTP 404 by the current view.
-
+          description: A house that does not exist is not translated to HTTP 404 by the current view.
   /api/farms/farm-house/register-device/:
     post:
       tags: [Farms]
       operationId: registerDevice
       summary: Register a device for a house
-      description: The current view does not enforce authentication, unlike the other farm endpoints.
+      security:
+        - tokenAuth: []
       requestBody:
         required: true
         content:
@@ -230,17 +220,22 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterDeviceRequest'
       responses:
-        '200':
-          description: Registration result. Duplicate device IDs return a failure status and message.
+        '201':
+          description: Device registered.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/RegisterDeviceSuccess'
-                  - $ref: '#/components/schemas/MessageStatusResponse'
+                $ref: '#/components/schemas/RegisterDeviceSuccess'
+        '409':
+          description: A device with this unique ID is already registered.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageStatusResponse'
+        '401':
+          description: Authentication required.
         '500':
-          description: Missing-house lookup errors are not translated into an HTTP 404 by the current view.
-
+          description: A house that does not exist is not translated to HTTP 404 by the current view.
   /api/farms/add-house/:
     post:
       tags: [Farms]
@@ -255,19 +250,22 @@ paths:
             schema:
               $ref: '#/components/schemas/RegisterHouseRequest'
       responses:
-        '200':
-          description: Registration result. A duplicate house uses the current misspelled `messagge` response property.
+        '201':
+          description: House registered.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: '#/components/schemas/RegisterHouseSuccess'
-                  - $ref: '#/components/schemas/HouseExistsResponse'
+                $ref: '#/components/schemas/RegisterHouseSuccess'
+        '409':
+          description: A house with this name already exists on the farm.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HouseExistsResponse'
         '401':
           description: Authentication required.
         '500':
-          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
-
+          description: A farm that does not exist is not translated to HTTP 404 by the current view.
   /api/farms/farm/add-worker/:
     post:
       tags: [Farms]
@@ -289,7 +287,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Worker'
         '200':
-          description: Serializer validation errors. The current view returns these with HTTP 200.
+          description: Serializer validation errors are returned with HTTP 200.
           content:
             application/json:
               schema:
@@ -297,8 +295,7 @@ paths:
         '401':
           description: Authentication required.
         '500':
-          description: Missing-farm lookup errors are not translated into an HTTP 404 by the current view.
-
+          description: A farm that does not exist is not translated to HTTP 404 by the current view.
   /api/schema/:
     get:
       tags: [Core]
@@ -314,14 +311,13 @@ paths:
             application/yaml:
               schema:
                 type: string
-
 components:
   securitySchemes:
     tokenAuth:
       type: apiKey
       in: header
       name: Authorization
-      description: 'Send the DRF token as `Authorization: Token <token>`.'
+      description: 'Send a DRF token as `Authorization: Token <token>`.'
   schemas:
     LoginRequest:
       type: object
@@ -357,7 +353,7 @@ components:
           type: string
     ValidationErrors:
       type: object
-      description: Field-keyed serializer errors; the exact keys depend on the submitted data.
+      description: Field-keyed serializer errors; keys depend on the submitted data.
       additionalProperties:
         oneOf:
           - type: string
@@ -366,7 +362,7 @@ components:
               type: string
     AccountRegistrationRequest:
       type: object
-      required: [username, phone_number]
+      required: [username, phone_number, password, password_confirmation]
       properties:
         username:
           type: string
@@ -380,7 +376,7 @@ components:
           format: email
         phone_number:
           type: string
-          description: Phone number in a format accepted by django-phonenumber-field, typically E.164.
+          description: Phone number accepted by django-phonenumber-field, typically E.164.
         password:
           type: string
           format: password
@@ -389,7 +385,7 @@ components:
           type: string
           format: password
           writeOnly: true
-          description: Must match password when supplied.
+          description: Must match password.
     AccountUpdateRequest:
       type: object
       properties:
@@ -432,6 +428,15 @@ components:
           type: string
         farm_address:
           type: string
+        bird_type:
+          type: string
+          description: Accepted for compatibility but not currently saved.
+        age:
+          type: integer
+          description: Accepted for compatibility but not currently saved.
+        population:
+          type: integer
+          description: Accepted for compatibility but not currently saved.
     FarmRegistrationResponse:
       type: object
       required: [name, address, farmer, farm_id]
@@ -464,12 +469,14 @@ components:
           format: date-time
     Bot:
       type: object
-      required: [name, unique_id]
+      required: [name, unique_id, track_number]
       properties:
         name:
           type: string
         unique_id:
           type: string
+        track_number:
+          type: integer
     House:
       type: object
       required: [id, name, devices_count, tracks, zones, bots, created_at]
@@ -492,7 +499,7 @@ components:
             $ref: '#/components/schemas/Bot'
         created_at:
           type: string
-          format: date
+          format: date-time
     FarmDetails:
       type: object
       required: [farm_detail, houses_details]
@@ -505,7 +512,7 @@ components:
             $ref: '#/components/schemas/House'
     RegisterDeviceRequest:
       type: object
-      required: [id, unique_id, name]
+      required: [id, unique_id, name, track_number]
       properties:
         id:
           type: integer
@@ -514,6 +521,8 @@ components:
           type: string
         name:
           type: string
+        track_number:
+          type: integer
     RegisterDeviceSuccess:
       type: object
       required: [status, bot_data]
@@ -556,6 +565,7 @@ components:
           example: fail
         messagge:
           type: string
+          description: Property name as currently returned by the API.
     AddWorkerRequest:
       type: object
       required: [farm_id, full_name, phone_number, role]
@@ -566,11 +576,17 @@ components:
           type: string
         phone_number:
           type: string
+          description: Must be unique across workers.
         role:
           type: string
+        shift:
+          type: string
+          enum: [day, night, any]
+          default: any
+          description: Optional; defaults to any.
     Worker:
       type: object
-      required: [full_name, phone_number, role, id]
+      required: [full_name, phone_number, role, id, shift]
       properties:
         full_name:
           type: string
@@ -580,3 +596,6 @@ components:
           type: string
         id:
           type: integer
+        shift:
+          type: string
+          enum: [day, night, any]

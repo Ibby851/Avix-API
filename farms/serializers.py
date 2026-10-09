@@ -40,7 +40,7 @@ class BirdSerializer(serializers.ModelSerializer):
 class BotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bot
-        fields = ['name','unique_id']
+        fields = ['name','unique_id', 'track_number']
 
 class ReadingSerializer(serializers.ModelSerializer):
     class Meta:
