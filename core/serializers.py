@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from core.models import User
 from farms.serializers import FarmSerializer
+from django.db.models import Count
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -59,5 +60,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         return obj.farms.count()
 
     def get_bots_count(self, obj) -> int:
-        return sum([farm.bots_count() for farm in obj.farms.all()])
+        bots_count = obj.farms.aggregate(total_bots=Count('houses__bots'))['total_bots']
+        return bots_count
     

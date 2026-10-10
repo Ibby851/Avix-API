@@ -63,8 +63,8 @@
 # Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 
- GET http://localhost:8000/api/farms/farm-house-details/1
- Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+#  GET http://localhost:8000/api/farms/farm-house-details/1
+#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 #   POST  http://localhost:8000/api/farms/farm-house/register-device/
 #  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
@@ -115,6 +115,12 @@
 #     "phone_number":"+2349038384962",
 #     "role":"Farm Manager"
 # }
+
+
+
+GET http://localhost:8000/api/core/view-profile/
+Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+Content-Type: application/json
 
 
 
