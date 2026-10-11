@@ -31,7 +31,7 @@ DEBUG = True
 # ALLOWED_HOSTS = ["avix-api.onrender.com", '127.0.0.1:8000', 'localhost:8000']
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["https://avix-api.onrender.com", 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://10.105.82.247:5173']
-CORS_ALLOWED_ORIGINS = ["http://localhost:5173", 'http://10.105.82.247:5173']
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", 'http://10.105.82.247:5173', 'https://avix-psi.vercel.app']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ["accept","authorization","content-type", "user-agent", "x-csrftoken", "x-requested-with"]
 
