@@ -34,7 +34,7 @@ class FarmRegistrationView(APIView):
     def post(self, request):
         print(request.data)
         data = {'name':request.data.get('farm_name'), 'address':request.data.get('farm_address')}
-        serializer = FarmRegistrationSerializer(data=data, context={'request':request})
+        serializer = FarmSerializer(data=data, context={'request':request})
         if serializer.is_valid():
             farm_obj = serializer.save(farmer=request.user)
             data = serializer.data
@@ -102,24 +102,23 @@ class HouseDetail(APIView):
 class RegisterBot(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        if Bot.objects.filter(unique_id=request.data.get('unique_id')).exists():
-            return Response({'status':'fail','message':'Bot has already been registered'}, status=status.HTTP_409_CONFLICT)
-        house = House.objects.get(id=request.data.get('id'))
-        bot = Bot.objects.create(house=house, unique_id=request.data.get('unique_id'),name=request.data.get('name'), track_number=request.data.get('track_number'))
-        bot_serializer = BotSerializer(bot)
-        return Response({'status':'success', 'bot_data':bot_serializer.data}, status=status.HTTP_201_CREATED)
+        serializer = BotSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors)
 
 class RegisterHouse(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         data = request.data
-        name = request.data.get('name')
-        farm = Farm.objects.get(id=data.get('id'))
-        if House.objects.filter(farm=farm,name=name).exists():
-            return Response({'status':'fail', 'messagge':'This house already exist on your farm'}, status=status.HTTP_409_CONFLICT)
-        house = House.objects.create(name=data.get('name'), farm=farm, zones=data.get('zones'), tracks=data.get('tracks'))
-        house_serializer = HouseSerializer(house)
-        return Response({"status":'success', 'house_data':house_serializer.data}, status=status.HTTP_201_CREATED)
+        farm_id = data.pop('farm_id')
+        serializer = HouseSerializer(data=request.data, context={'request':request, 'farm_id':farm_id})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors)
 
 
 

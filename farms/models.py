@@ -18,9 +18,10 @@ class Farm(models.Model):
 
 class Bot(models.Model):
     house = models.ForeignKey('House',related_name='bots', on_delete=models.CASCADE)
-    unique_id = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=25, default='AviX Bot')
-    track_number = models.SmallIntegerField()
+    mac = models.CharField(max_length=155, unique=True)
+    name= models.CharField(max_length=155)
+    track_label = models.CharField(max_length=50)
+    zone_count = models.IntegerField(default=0, null=True, blank=True)
     installed_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -43,8 +44,9 @@ class Reading(models.Model):
 class House(models.Model):
     farm = models.ForeignKey(Farm, related_name='houses', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    tracks = models.PositiveIntegerField()
-    zones = models.JSONField(default=dict)
+    length_m = models.IntegerField()
+    width_m = models.IntegerField()
+    height_m = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
 

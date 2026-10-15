@@ -63,33 +63,30 @@
 # Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
 
-#  GET http://localhost:8000/api/farms/farm-house-details/1
+#  GET http://localhost:8000/api/farms/farm-house-details/3
 #  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
-#   POST  http://localhost:8000/api/farms/farm-house/register-device/
-#  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
-# Content-Type: application/json
+POST  http://localhost:8000/api/farms/farm-house/register-device/
+Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+Content-Type: application/json
 
-# {
-#     "id":1,
-#     "unique_id":"Bot3",
-#     "name":"Bot 3",
-#     "track_number":1
-# }
+{
+    "house_id":1,
+    "mac":"Bot 3",
+    "name":"Bot 3",
+    "track_label":"001"
+}
 
 # POST http://localhost:8000/api/farms/add-house/
 # Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 # Content-Type: application/json
 
 # {
-#     "id":1,
-#     "tracks":3,
-#     "name":"House",
-#     "zones":{
-#         "1":[1, 2, 3],
-#         "2":[1, 2, 3],
-#         "3":[1, 2, 3]
-#     }
+#     "farm_id":1,
+#     "width_m":20,
+#     "height_m":30,
+#     "length_m":30,
+#     "name":"House 4"
 # }
 
 
@@ -118,9 +115,9 @@
 
 
 
-GET http://localhost:8000/api/core/view-profile/
-Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
-Content-Type: application/json
+# GET http://localhost:8000/api/core/view-profile/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
 
 
 
