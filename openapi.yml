@@ -16,6 +16,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
+            examples:
+              login:
+                value:
+                  username: alaba_user
+                  password: ExamplePass123!
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LoginRequest'
@@ -29,6 +34,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
+              example:
+                token: '0123456789abcdef0123456789abcdef01234567'
+        '400':
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                non_field_errors:
+                  - Unable to log in with provided credentials.
 
   /api/core/logout/:
     post:
@@ -45,6 +61,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LogoutResponse'
+              example:
+                status: success
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/core/accounts/register/:
     post:
@@ -58,6 +78,16 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UserRegistration'
+            examples:
+              registration:
+                value:
+                  username: alaba_user
+                  first_name: Alaba
+                  last_name: Adebayo
+                  phone_number: "+2348012345678"
+                  email: alaba@example.com
+                  password: ExamplePass123!
+                  password_confirmation: ExamplePass123!
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/UserRegistration'
@@ -66,11 +96,21 @@ paths:
               $ref: '#/components/schemas/UserRegistration'
       responses:
         '200':
-          description: Registration successful
+          description: Registration succeeded or the request failed validation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegistrationResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/RegistrationResponse'
+                  - $ref: '#/components/schemas/ValidationError'
+              examples:
+                success:
+                  value:
+                    status: success
+                validationError:
+                  value:
+                    password_confirmation:
+                      - Password do not match.
 
   /api/core/accounts/update/:
     patch:
@@ -86,6 +126,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedUserRegistration'
+            example:
+              email: alaba@example.com
+              first_name: Alaba
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PatchedUserRegistration'
@@ -94,11 +137,23 @@ paths:
               $ref: '#/components/schemas/PatchedUserRegistration'
       responses:
         '200':
-          description: Account updated successfully
+          description: Account updated or the request failed validation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountUpdateResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/AccountUpdateResponse'
+                  - $ref: '#/components/schemas/ValidationError'
+              examples:
+                success:
+                  value:
+                    status: success
+                validationError:
+                  value:
+                    email:
+                      - Enter a valid email address.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/core/view-profile/:
     get:
@@ -115,6 +170,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Profile'
+              example:
+                first_name: Alaba
+                last_name: Adebayo
+                email: alaba@example.com
+                username: alaba_user
+                phone_number: "+2348012345678"
+                farms_count: 2
+                bots_count: 1
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/add-farm/:
     post:
@@ -130,6 +195,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/FarmRegistrationRequest'
+            example:
+              farm_name: Green Valley Farm
+              farm_address: 12 Farm Road, Ibadan
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/FarmRegistrationRequest'
@@ -138,11 +206,28 @@ paths:
               $ref: '#/components/schemas/FarmRegistrationRequest'
       responses:
         '200':
-          description: Farm registered successfully
+          description: Farm registered or the request failed validation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FarmRegistrationResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/Farm'
+                  - $ref: '#/components/schemas/ValidationError'
+              examples:
+                success:
+                  value:
+                    farm_id: 1
+                    name: Green Valley Farm
+                    address: 12 Farm Road, Ibadan
+                    houses_count: 0
+                    workers_count: 0
+                    created_at: '2026-10-01T09:30:00Z'
+                validationError:
+                  value:
+                    name:
+                      - This field is required.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/farms-list/:
     get:
@@ -161,6 +246,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Farm'
+              example:
+                - farm_id: 1
+                  name: Green Valley Farm
+                  address: 12 Farm Road, Ibadan
+                  houses_count: 2
+                  workers_count: 1
+                  created_at: '2026-10-01T09:30:00Z'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/farm-details/{id}/:
     get:
@@ -183,6 +277,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FarmDetailResponse'
+              example:
+                farm_detail:
+                  farm_id: 1
+                  name: Green Valley Farm
+                  address: 12 Farm Road, Ibadan
+                  houses_count: 1
+                  workers_count: 0
+                  created_at: '2026-10-01T09:30:00Z'
+                houses_details:
+                  - house_id: 3
+                    name: House A
+                    devices_count: 1
+                    length_m: 30
+                    width_m: 20
+                    height_m: 5
+                    created_at: '2026-10-02T09:30:00Z'
+                    bots: []
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/farm-house-details/{id}/:
     get:
@@ -205,6 +318,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/House'
+              example:
+                house_id: 3
+                name: House A
+                devices_count: 1
+                length_m: 30
+                width_m: 20
+                height_m: 5
+                created_at: '2026-10-02T09:30:00Z'
+                bots: []
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/farm-house/register-device/:
     post:
@@ -212,12 +336,19 @@ paths:
         - farms
       summary: Register a farm device or bot for a house
       operationId: farms_register_bot_create
+      security:
+        - tokenAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RegisterBotRequest'
+            example:
+              mac: 00:11:22:33:44:55
+              track_label: '001'
+              house_id: 3
+              zone_count: 2
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/RegisterBotRequest'
@@ -226,11 +357,29 @@ paths:
               $ref: '#/components/schemas/RegisterBotRequest'
       responses:
         '200':
-          description: Bot registration result
+          description: Bot validation errors
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegisterBotResponse'
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                mac:
+                  - This field is required.
+        '201':
+          description: Bot registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bot'
+              example:
+                device_id: 7
+                mac: 00:11:22:33:44:55
+                track_label: '001'
+                installed_at: '2026-10-02T09:30:00Z'
+                house_id: 3
+                zone_count: 2
+        '401':
+          $ref: '#/components/responses/Unauthorized'
 
   /api/farms/add-house/:
     post:
@@ -246,6 +395,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/RegisterHouseRequest'
+            example:
+              farm_id: 1
+              name: House A
+              length_m: 30
+              width_m: 20
+              height_m: 5
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/RegisterHouseRequest'
@@ -254,11 +409,121 @@ paths:
               $ref: '#/components/schemas/RegisterHouseRequest'
       responses:
         '200':
+          description: House validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                name:
+                  - This field is required.
+        '201':
           description: House registered successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegisterHouseResponse'
+                $ref: '#/components/schemas/House'
+              example:
+                house_id: 4
+                name: House A
+                devices_count: 0
+                length_m: 30
+                width_m: 20
+                height_m: 5
+                created_at: '2026-10-03T09:30:00Z'
+                bots: []
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/farms/farm/add-worker/:
+    post:
+      tags:
+        - farms
+      summary: Add a worker to a farm
+      operationId: farms_add_worker_create
+      security:
+        - tokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerRequest'
+            example:
+              farm_id: 1
+              full_name: Ade Kunle
+              phone_number: "+2349038384962"
+              role: Farm Manager
+              shift: day
+      responses:
+        '200':
+          description: Worker validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+              example:
+                phone_number:
+                  - Enter a valid phone number.
+        '201':
+          description: Worker added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Worker'
+              example:
+                full_name: Ade Kunle
+                phone_number: "+2349038384962"
+                role: Farm Manager
+                id: 5
+                shift: day
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/farms/farm/send-command/{mac_address}/:
+    post:
+      tags:
+        - farms
+      summary: Send a command to a registered bot
+      operationId: farms_send_command_create
+      security:
+        - tokenAuth: []
+      parameters:
+        - in: path
+          name: mac_address
+          required: true
+          schema:
+            type: string
+          description: MAC address of the registered bot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              description: Command payload forwarded to the bot.
+            example:
+              command: start
+      responses:
+        '200':
+          description: Command queued for delivery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+              example:
+                status: Command Sent
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: No bot is registered with the supplied MAC address
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandResponse'
+              example:
+                status: Bot not found
+
 components:
   schemas:
     LoginRequest:
@@ -285,6 +550,8 @@ components:
       properties:
         status:
           type: string
+          enum:
+            - success
       required:
         - status
 
@@ -343,6 +610,8 @@ components:
       properties:
         status:
           type: string
+          enum:
+            - success
       required:
         - status
 
@@ -351,6 +620,19 @@ components:
       properties:
         status:
           type: string
+          enum:
+            - success
+      required:
+        - status
+
+    CommandResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - Command Sent
+            - Bot not found
       required:
         - status
 
@@ -388,28 +670,14 @@ components:
           type: string
         farm_address:
           type: string
-        bird_type:
-          type: string
-        age:
-          type: integer
-        population:
-          type: integer
       required:
         - farm_name
         - farm_address
 
-    FarmRegistrationResponse:
-      type: object
-      properties:
-        status:
-          type: string
-      required:
-        - status
-
     Farm:
       type: object
       properties:
-        id:
+        farm_id:
           type: integer
         name:
           type: string
@@ -417,53 +685,72 @@ components:
           type: string
         houses_count:
           type: integer
+        workers_count:
+          type: integer
         created_at:
           type: string
           format: date-time
       required:
-        - id
+        - farm_id
         - name
         - address
         - houses_count
+        - workers_count
         - created_at
 
-    HouseBot:
+    Bot:
       type: object
       properties:
-        name:
+        device_id:
+          type: integer
+          readOnly: true
+        mac:
           type: string
-        unique_id:
+        track_label:
           type: string
+        installed_at:
+          type: string
+          format: date-time
+          readOnly: true
+        house_id:
+          type: integer
+        zone_count:
+          type: integer
+          nullable: true
       required:
-        - name
-        - unique_id
+        - mac
+        - track_label
+        - house_id
 
     House:
       type: object
       properties:
-        id:
+        house_id:
           type: integer
         name:
           type: string
         devices_count:
           type: integer
-        tracks:
+        length_m:
           type: integer
-        zones:
+        width_m:
+          type: integer
+        height_m:
           type: integer
         bots:
           type: array
           items:
-            $ref: '#/components/schemas/HouseBot'
+            $ref: '#/components/schemas/Bot'
         created_at:
           type: string
           format: date-time
       required:
-        - id
+        - house_id
         - name
         - devices_count
-        - tracks
-        - zones
+        - length_m
+        - width_m
+        - height_m
         - bots
         - created_at
 
@@ -483,61 +770,113 @@ components:
     RegisterBotRequest:
       type: object
       properties:
-        id:
+        mac:
+          type: string
+        track_label:
+          type: string
+        house_id:
           type: integer
-          description: House ID
-        unique_id:
-          type: string
-        name:
-          type: string
+        zone_count:
+          type: integer
+          nullable: true
       required:
-        - id
-        - unique_id
-        - name
-
-    RegisterBotResponse:
-      type: object
-      properties:
-        status:
-          type: string
-        bot_data:
-          $ref: '#/components/schemas/HouseBot'
-      required:
-        - status
-        - bot_data
+        - mac
+        - track_label
+        - house_id
 
     RegisterHouseRequest:
       type: object
       properties:
-        id:
+        farm_id:
           type: integer
-          description: Farm ID
         name:
           type: string
-        zones:
+        length_m:
           type: integer
-        tracks:
+        width_m:
+          type: integer
+        height_m:
           type: integer
       required:
-        - id
+        - farm_id
         - name
-        - zones
-        - tracks
+        - length_m
+        - width_m
+        - height_m
 
-    RegisterHouseResponse:
+    WorkerRequest:
       type: object
       properties:
-        status:
+        farm_id:
+          type: integer
+        full_name:
           type: string
-        house_data:
-          $ref: '#/components/schemas/House'
+        phone_number:
+          type: string
+        role:
+          type: string
+        shift:
+          type: string
+          enum:
+            - day
+            - night
+            - any
       required:
-        - status
-        - house_data
+        - farm_id
+        - full_name
+        - phone_number
+        - role
+
+    Worker:
+      type: object
+      properties:
+        full_name:
+          type: string
+        phone_number:
+          type: string
+        role:
+          type: string
+        id:
+          type: integer
+          readOnly: true
+        shift:
+          type: string
+          enum:
+            - day
+            - night
+            - any
+      required:
+        - full_name
+        - phone_number
+        - role
+        - id
+        - shift
+
+    ValidationError:
+      type: object
+      description: Field names map to validation messages; nested errors may also be returned.
+      additionalProperties: true
+
+    AuthenticationError:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+        - detail
+  responses:
+    Unauthorized:
+      description: Authentication token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuthenticationError'
+          example:
+            detail: Authentication credentials were not provided.
 
   securitySchemes:
     tokenAuth:
       type: apiKey
       in: header
       name: Authorization
-      description: Token-based authentication using the Django REST Framework token scheme.
+      description: "Send the token as `Authorization: Token <key>`."

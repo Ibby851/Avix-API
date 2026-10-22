@@ -66,16 +66,16 @@
 #  GET http://localhost:8000/api/farms/farm-house-details/3
 #  Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 
-POST  http://localhost:8000/api/farms/farm-house/register-device/
-Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
-Content-Type: application/json
+# POST  http://localhost:8000/api/farms/farm-house/register-device/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
 
-{
-    "house_id":1,
-    "mac":"Bot 3",
-    "name":"Bot 3",
-    "track_label":"001"
-}
+# {
+#     "house_id":1,
+#     "mac":"Bot 3",
+#     "name":"Bot 3",
+#     "track_label":"001"
+# }
 
 # POST http://localhost:8000/api/farms/add-house/
 # Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
@@ -120,5 +120,14 @@ Content-Type: application/json
 # Content-Type: application/json
 
 
+# POST http://localhost:8000/api/farms/farm/send-command/44:1D:64:F5:F5:F0/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Content-Type: application/json
 
+# {
+#     "command_type":"count_zones"
+# }
+
+Get http://localhost:8000/api/farms/farm/get-bot-reading/44:1D:64:F5:F5:F0/
+Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 

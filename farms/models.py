@@ -26,7 +26,7 @@ class Bot(models.Model):
 
 
 class Bird(models.Model):
-    farm = models.OneToOneField(Farm, on_delete=models.CASCADE)
+    house = models.OneToOneField('House', on_delete=models.CASCADE)
     bird_type = models.CharField(max_length=50)
     age = models.IntegerField()
     population = models.IntegerField()
@@ -34,10 +34,9 @@ class Bird(models.Model):
 
 class Reading(models.Model):
     bot = models.ForeignKey(Bot,on_delete=models.SET_NULL, related_name='readings', null=True)
-    farm = models.ForeignKey(Farm, on_delete=models.CASCADE, related_name='farm_readings')
-    temperature = models.FloatField()
-    humidity = models.FloatField()
-    ammonia = models.FloatField()
+    temperature = models.FloatField(null=True)
+    humidity = models.FloatField(null=True)
+    ammonia = models.FloatField(null=True)
     recorded_at = models.DateTimeField(auto_now_add=True)
     zone_index = models.IntegerField()
 

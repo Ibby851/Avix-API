@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_q',
     'phonenumber_field',
     'corsheaders',
     'rest_framework',
@@ -94,14 +96,29 @@ WSGI_APPLICATION = 'avix_api.wsgi.application'
 
 
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+if os.environ.get('ENVIRONMENT') == 'PRODUCTION':
+    DATABASES = {
+        'default': dj_database_url.config(
+            default = os.environ.get('DATABASE_URL')
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3'
     }
 }
 
+
+Q_CLUSTER = {
+'name': 'Avix',
+'workers': 4,
+'timeout': 60,
+'retry': 90,
+'queue_limit': 50,
+'orm': 'default',
+}
 
 
 # Password validation
@@ -180,3 +197,10 @@ STORAGES = {
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+MQTT_HOST_NAME = os.environ.get('MQTT_HOST_NAME')
+MQTT_PORT = int(os.environ.get('MQTT_PORT'))
+
+
+

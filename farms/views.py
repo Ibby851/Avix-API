@@ -9,6 +9,9 @@ from rest_framework import serializers
 from drf_spectacular.utils import OpenApiExample, extend_schema, inline_serializer
 from .serializers import *
 from .models import *
+from .mqtt_services import mqtt_obj
+from django_q.tasks import async_task
+from .tasks import send_command
 # Create your views here.
 
 class FarmRegistrationView(APIView):
@@ -135,8 +138,24 @@ class AddWorker(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
 
-        
+class SendCommand(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, mac_address):
+        if Bot.objects.filter(mac=mac_address).exists():
+            async_task('farms.tasks.send_command', mac_address, request.data)
+            return Response({'status':'Command Sent'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status':'Bot not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        
+class GetBotReadings(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, mac_address):
+        readings = Reading.objects.filter(bot__mac=mac_address).order_by('-recorded_at')
+        serializer = ReadingSerializer(readings, many=True)
+        return Response({'mac_address':mac_address,'readings':serializer.data})
             
         
         

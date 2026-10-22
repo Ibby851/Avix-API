@@ -59,7 +59,7 @@ class BotSerializer(serializers.ModelSerializer):
 class ReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reading
-        fields = ['temperature', 'humidity', 'ammonia', 'recorded_at', 'zone_index']
+        fields = ['temperature', 'humidity', 'ammonia', 'zone_index','recorded_at']
 
 
 
