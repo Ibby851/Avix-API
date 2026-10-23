@@ -86,7 +86,7 @@
 #     "width_m":20,
 #     "height_m":30,
 #     "length_m":30,
-#     "name":"House 4"
+#     "name":"House 5"
 # }
 
 
@@ -128,6 +128,6 @@
 #     "command_type":"count_zones"
 # }
 
-Get http://localhost:8000/api/farms/farm/get-bot-reading/44:1D:64:F5:F5:F0/
-Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
+# Get http://localhost:8000/api/farms/farm/get-bot-reading/44:1D:64:F5:F5:F0/
+# Authorization: Token 065018e7d24e514a44a111740d6a37fdfbe7111f
 

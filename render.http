@@ -1,0 +1,41 @@
+# POST https://avix-api.onrender.com/api/core/login/
+# Content-Type: application/json
+
+# {
+#     "username":"Alaba",
+#     "password":"@Ibraheem123"
+# }
+
+# "d75007ec65fd1aedd6fc5fc718530b5a43eba2eb"
+
+# GET https://avix-api.onrender.com/api/farms/farms-list/
+# Authorization: Token d75007ec65fd1aedd6fc5fc718530b5a43eba2eb
+
+
+# POST https://avix-api.onrender.com/api/farms/add-house/
+# Authorization: Token d75007ec65fd1aedd6fc5fc718530b5a43eba2eb
+# Content-Type: application/json
+
+# {
+#     "farm_id":2,
+#     "width_m":20,
+#     "height_m":30,
+#     "length_m":30,
+#     "name":"Test House"
+# }
+
+
+# POST https://avix-api.onrender.com/api/farms/farm-house/register-device/
+# Authorization: Token d75007ec65fd1aedd6fc5fc718530b5a43eba2eb
+# Content-Type: application/json
+
+# {
+#     "house_id":2,
+#     "mac":"Test Address",
+#     "name":"Avix Bot",
+#     "track_label":"001"
+# }
+
+GET https://avix-api.onrender.com/api/farms/farm-house-details/1/
+Authorization: Token d75007ec65fd1aedd6fc5fc718530b5a43eba2eb
+
